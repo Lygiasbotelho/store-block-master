@@ -14,9 +14,12 @@ interface CountdownProps {
 const DEFAULT_TARGET_DATE = (new Date('2020-06-25')).toISOString()
 const CSS_HANDLES = ['countdown']
 
+/*
+const Countdown: StorefrontFunctionComponent<CountdownProps> = ({
+  targetDate = DEFAULT_TARGET_DATE*/
 
 const Countdown: StorefrontFunctionComponent<CountdownProps> = ({
-  targetDate = DEFAULT_TARGET_DATE
+
 }) => {
   const [timeRemaining, setTime] = useState<TimeSplit>({
     hours: '00',
@@ -38,12 +41,11 @@ const Countdown: StorefrontFunctionComponent<CountdownProps> = ({
     },
     ssr: false
   })
-  console.log({ data })
+ 
 
   tick(data?.product?.releaseDate || DEFAULT_TARGET_DATE, setTime)
+  console.log({ data })
 
-
-  /**/
   if (loading) {
     return (
       <div>
@@ -51,42 +53,27 @@ const Countdown: StorefrontFunctionComponent<CountdownProps> = ({
       </div>
     )
   }
-  if (error) {
+  if (error && product) {
     return (
       <div>
         <span>Erro!</span>
       </div>
     )
   }
-  if (!product) {
+  if (!product && !error) {
     return (
       <div>
         <span>Não há contexto de produto</span>
       </div>
     )
   }
-  /**/
 
   return (
-    <div className={`${handles.countdown} db tc`}>
+    <div className={`${handles.countdown} t-heading-2 fw3 w-100 c-muted-1 db tc`}>
       {`${timeRemaining.hours}:${timeRemaining.minutes}:${timeRemaining.seconds}`}
     </div>
   )
 }
-//console.log({ data })
-
-/*return (
-    <div className={`${handles.container} t-heading-2 fw3 w-100 c-muted-1`}>
-      <div className={`${handles.title} db tc`}>{titleText}</div>
-      <div className={`${handles.countdown} db tc`}>
-        {`${timeRemaining.hours}:${timeRemaining.minutes}:${timeRemaining.seconds}`}
-      </div>
-    </div>
-  )*/
-
-/*  <div className={`${handles.countdown} t-heading-2 fw3 w-100 c-muted-1 db tc`}>
-      <h1>{`${timeRemaining.hours}:${timeRemaining.minutes}:${timeRemaining.seconds}`}</h1>
-    </div>*/
 
 Countdown.schema = {
   title: 'editor.countdown.title',
@@ -101,13 +88,5 @@ Countdown.schema = {
     },
   },
 }
-
-
-/* targetDate: {
-      title: 'Data final',
-      description: 'Data final utilizada no contador',
-      type: 'string',
-      default: null,
-    }, */
 
 export default Countdown
