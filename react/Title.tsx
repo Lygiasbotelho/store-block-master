@@ -10,7 +10,7 @@ const Title: StorefrontFunctionComponent<TitleProps> = ({ title }) => {
 
     return (
         <div className={`${handles.title} t-heading-2 fw3 w-100 c-muted-1 db tc`}>
-            {titleText}
+            { titleText }
         </div>
     )
 }

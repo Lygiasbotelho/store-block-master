@@ -6,58 +6,18 @@ import { useQuery } from 'react-apollo';
 import useProduct from 'vtex.product-context/useProduct';
 import productReleaseDate from './queries/productReleaseDate.graphql';
 
-const { product: { linkText } } = useProduct()
-const { data, loading, error } = useQuery(productReleaseDate, {
-  variables: {
-    slug: linkText
-  },
-  ssr: false,
-
-   /**
-  if (loading) {
-    return (
-      <div>
-        <span>Loading...</span>
-      </div>
-    )
-  }
-  if (error) {
-    return (
-      <div>
-        <span>Erro!</span>
-      </div>
-    )
-  }
-  if (!product) {
-    return (
-      <div>
-        <span>Não há contexto de produto</span>
-      </div>
-    )
-  }
-  /**/
-})
-
-console.log({data})
 
 interface CountdownProps {
-  targetDate: string
+  targetDate: string,
 }
-const DEFAULT_TARGET_DATE = (new Date('2020-06-25')).toISOString();
-const CSS_HANDLES = ['countdown'];
 
-/**
-const Countdown: StorefrontFunctionComponent<CountdownProps> = ({
-  targetDate = DEFAULT_TARGET_DATE }) => {
-  const [timeRemaining, setTime] = useState<TimeSplit>({
-    hours: '00',
-    minutes: '00',
-    seconds: '00'
-  })
- */
+const DEFAULT_TARGET_DATE = (new Date('2020-06-25')).toISOString()
+const CSS_HANDLES = ['countdown']
+
 
 const Countdown: StorefrontFunctionComponent<CountdownProps> = ({
-   }) => {
+  targetDate = DEFAULT_TARGET_DATE
+}) => {
   const [timeRemaining, setTime] = useState<TimeSplit>({
     hours: '00',
     minutes: '00',
@@ -66,8 +26,22 @@ const Countdown: StorefrontFunctionComponent<CountdownProps> = ({
 
   const handles = useCssHandles(CSS_HANDLES)
 
-  // tick(targetDate, setTime)
+  //const { product: { linkText }} = useProduct()
+  //const { product: { linkText }, product } = useProduct()
+  const productContext = useProduct()
+  const product = productContext?.product
+  const linkText = product?.linkText
+
+  const { data, loading, error } = useQuery(productReleaseDate, {
+    variables: {
+      slug: linkText
+    },
+    ssr: false
+  })
+  console.log({ data })
+
   tick(data?.product?.releaseDate || DEFAULT_TARGET_DATE, setTime)
+
 
   /**/
   if (loading) {
@@ -94,13 +68,22 @@ const Countdown: StorefrontFunctionComponent<CountdownProps> = ({
   /**/
 
   return (
-
-    <div className={`${handles.countdown} t-heading-2 fw3 w-100 c-muted-1 db tc`}>
+    <div className={`${handles.countdown} db tc`}>
       {`${timeRemaining.hours}:${timeRemaining.minutes}:${timeRemaining.seconds}`}
     </div>
-
   )
 }
+//console.log({ data })
+
+/*return (
+    <div className={`${handles.container} t-heading-2 fw3 w-100 c-muted-1`}>
+      <div className={`${handles.title} db tc`}>{titleText}</div>
+      <div className={`${handles.countdown} db tc`}>
+        {`${timeRemaining.hours}:${timeRemaining.minutes}:${timeRemaining.seconds}`}
+      </div>
+    </div>
+  )*/
+
 /*  <div className={`${handles.countdown} t-heading-2 fw3 w-100 c-muted-1 db tc`}>
       <h1>{`${timeRemaining.hours}:${timeRemaining.minutes}:${timeRemaining.seconds}`}</h1>
     </div>*/
@@ -110,14 +93,21 @@ Countdown.schema = {
   description: 'editor.countdown.description',
   type: 'object',
   properties: {
-
     targetDate: {
-      title: 'Data final',
-      description: 'Data final utilizada no contador',
+      title: 'editor.countdown.targetDate.title',
+      description: 'editor.countdown.targetDate.description',
       type: 'string',
       default: null,
     },
   },
 }
+
+
+/* targetDate: {
+      title: 'Data final',
+      description: 'Data final utilizada no contador',
+      type: 'string',
+      default: null,
+    }, */
 
 export default Countdown
